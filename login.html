@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CalMamente - Iniciar Sesión</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Estilos generales */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #4A55A2;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .logo {
+            color: #4A55A2;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .form-container {
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            border-color: #4A55A2;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(74, 85, 162, 0.2);
+        }
+
+        .btn {
+            background-color: #4A55A2;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            background-color: #3A4395;
+            transform: translateY(-2px);
+        }
+
+        .switch-form {
+            margin-top: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .switch-form a {
+            color: #4A55A2;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            margin-top: 15px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .success-message {
+            color: #2ecc71;
+            margin-top: 15px;
+            font-size: 14px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <i class="fas fa-brain"></i>
+        </div>
+        <h1>CalMamente</h1>
+        <div id="login-form" class="form-container">
+            <h2>Iniciar Sesión</h2>
+            <div class="form-group">
+                <label for="login-email">Correo electrónico</label>
+                <input type="email" id="login-email" placeholder="tucorreo@empresa.com" required>
+            </div>
+            <div class="form-group">
+                <label for="login-password">Contraseña</label>
+                <input type="password" id="login-password" placeholder="Tu contraseña" required>
+            </div>
+            <button id="login-btn" class="btn">Iniciar Sesión</button>
+            <div class="switch-form">
+                ¿No tienes cuenta? <a id="show-register">Regístrate aquí</a>
+            </div>
+            <div id="login-error" class="error-message"></div>
+        </div>
+
+        <div id="register-form" class="form-container" style="display: none;">
+            <h2>Regístrate</h2>
+            <div class="form-group">
+                <label for="register-email">Correo electrónico</label>
+                <input type="email" id="register-email" placeholder="tucorreo@empresa.com" required>
+            </div>
+            <div class="form-group">
+                <label for="register-password">Contraseña</label>
+                <input type="password" id="register-password" placeholder="Mínimo 6 caracteres" required>
+            </div>
+            <div class="form-group">
+                <label for="register-confirm-password">Confirmar contraseña</label>
+                <input type="password" id="register-confirm-password" placeholder="Repetir contraseña" required>
+            </div>
+            <button id="register-btn" class="btn">Crear Cuenta</button>
+            <div class="switch-form">
+                ¿Ya tienes cuenta? <a id="show-login">Inicia sesión aquí</a>
+            </div>
+            <div id="register-error" class="error-message"></div>
+            <div id="register-success" class="success-message"></div>
+        </div>
+    </div>
+
+    <!-- Scripts de Firebase -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCBfF4xpr0rWKAXPlk9x0__UfzPETSMwb4",
+            authDomain: "calmamente-3bfc1.firebaseapp.com",
+            projectId: "calmamente-3bfc1",
+            storageBucket: "calmamente-3bfc1.firebasestorage.app",
+            messagingSenderId: "1088959614450",
+            appId: "1:1088959614450:web:5d328c0c593228e214af6b"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Comprobar si el usuario ya está autenticado
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // Usuario ya autenticado, redirigir a la página principal
+                window.location.href = "index.html";
+            }
+        });
+
+        // Obtener elementos del DOM
+        const loginForm = document.getElementById("login-form");
+        const registerForm = document.getElementById("register-form");
+        const showRegister = document.getElementById("show-register");
+        const showLogin = document.getElementById("show-login");
+        const loginBtn = document.getElementById("login-btn");
+        const registerBtn = document.getElementById("register-btn");
+        const loginError = document.getElementById("login-error");
+        const registerError = document.getElementById("register-error");
+        const registerSuccess = document.getElementById("register-success");
+
+        // Alternar entre formularios
+        showRegister.addEventListener("click", () => {
+            loginForm.style.display = "none";
+            registerForm.style.display = "block";
+            loginError.style.display = "none";
+        });
+
+        showLogin.addEventListener("click", () => {
+            registerForm.style.display = "none";
+            loginForm.style.display = "block";
+            registerError.style.display = "none";
+            registerSuccess.style.display = "none";
+        });
+
+        // Manejar inicio de sesión
+        loginBtn.addEventListener("click", () => {
+            const email = document.getElementById("login-email").value;
+            const password = document.getElementById("login-password").value;
+
+            if (!email || !password) {
+                loginError.textContent = "Por favor, completa todos los campos";
+                loginError.style.display = "block";
+                return;
+            }
+
+            signInWithEmailAndPassword(auth, email, password)
+                .then(() => {
+                    // Redirigir a la página principal tras login exitoso
+                    window.location.href = "index.html";
+                })
+                .catch((error) => {
+                    // Manejar errores de autenticación
+                    let errorMessage = "Error al iniciar sesión";
+                    if (error.code === "auth/invalid-credential" || error.code === "auth/wrong-password" || error.code === "auth/user-not-found") {
+                        errorMessage = "Correo o contraseña incorrectos";
+                    } else if (error.code === "auth/too-many-requests") {
+                        errorMessage = "Demasiados intentos fallidos. Inténtalo más tarde";
+                    }
+                    
+                    loginError.textContent = errorMessage;
+                    loginError.style.display = "block";
+                });
+        });
+
+        // Manejar registro
+        registerBtn.addEventListener("click", () => {
+            const email = document.getElementById("register-email").value;
+            const password = document.getElementById("register-password").value;
+            const confirmPassword = document.getElementById("register-confirm-password").value;
+
+            // Validaciones básicas
+            if (!email || !password || !confirmPassword) {
+                registerError.textContent = "Por favor, completa todos los campos";
+                registerError.style.display = "block";
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                registerError.textContent = "Las contraseñas no coinciden";
+                registerError.style.display = "block";
+                return;
+            }
+
+            if (password.length < 6) {
+                registerError.textContent = "La contraseña debe tener al menos 6 caracteres";
+                registerError.style.display = "block";
+                return;
+            }
+
+            // Crear usuario
+            createUserWithEmailAndPassword(auth, email, password)
+                .then(() => {
+                    // Registro exitoso
+                    registerSuccess.textContent = "¡Registro exitoso! Ahora puedes iniciar sesión";
+                    registerSuccess.style.display = "block";
+                    registerError.style.display = "none";
+                    
+                    // Limpiar campos
+                    document.getElementById("register-email").value = "";
+                    document.getElementById("register-password").value = "";
+                    document.getElementById("register-confirm-password").value = "";
+                    
+                    // Mostrar formulario de inicio de sesión después de 2 segundos
+                    setTimeout(() => {
+                        registerForm.style.display = "none";
+                        loginForm.style.display = "block";
+                    }, 2000);
+                })
+                .catch((error) => {
+                    // Manejar errores de registro
+                    let errorMessage = "Error al crear la cuenta";
+                    if (error.code === "auth/email-already-in-use") {
+                        errorMessage = "Este correo ya está registrado";
+                    } else if (error.code === "auth/invalid-email") {
+                        errorMessage = "Correo electrónico inválido";
+                    } else if (error.code === "auth/weak-password") {
+                        errorMessage = "La contraseña es demasiado débil";
+                    }
+                    
+                    registerError.textContent = errorMessage;
+                    registerError.style.display = "block";
+                    registerSuccess.style.display = "none";
+                });
+        });
+    </script>
+</body>
+</html>
