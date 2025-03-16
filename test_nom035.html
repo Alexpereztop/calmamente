@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test NOM-035 - CalMamente</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Estilos generales */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Barra de navegación */
+        .navbar {
+            background-color: #4A55A2;
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .navbar .logo i {
+            margin-right: 10px;
+        }
+
+        .navbar .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .navbar .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 0.8rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .navbar .nav-links a:hover,
+        .navbar .nav-links a.active {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .navbar .user-actions {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar .user-email {
+            margin-right: 15px;
+            font-size: 0.9rem;
+        }
+
+        .navbar .logout-btn {
+            background-color: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .navbar .logout-btn:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Menú hamburguesa para móviles */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .menu-toggle span {
+            width: 25px;
+            height: 3px;
+            background-color: white;
+            margin: 2px 0;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        /* Contenido principal */
+        .main-content {
+            padding: 100px 2rem 2rem 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .test-container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .test-intro {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .test-intro h1 {
+            color: #4A55A2;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .test-intro p {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .test-form {
+            margin-top: 2rem;
+        }
+
+        .question-group {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .question-group:last-child {
+            border-bottom: none;
+        }
+
+        .question-text {
+            font-weight: 500;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .options-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            background-color: #f5f7fa;
+            border-radius: 5px;
+            transition: all 0.2s ease;
+            flex: 1 1 calc(50% - 1rem);
+            min-width: 150px;
+        }
+
+        .option-label:hover {
+            background-color: #e9ecef;
+        }
+
+        .option-label input {
+            margin-right: 10px;
+        }
+
+        .submit-btn {
+            display: block;
+            width: 100%;
+            background-color: #4A55A2;
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 2rem;
+            font-size: 1rem;
+        }
+
+        .submit-btn:hover {
+            background-color: #3A4395;
+        }
+
+        .submit-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .result-container {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border-left: 5px solid #4A55A2;
+            display: none;
+        }
+
+        .result-title {
+            font-weight: 600;
+            color: #4A55A2;
+            margin-bottom: 1rem;
+        }
+
+        .result-description {
+            margin-bottom: 1rem;
+        }
+
+        .result-score {
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .result-recommendation {
+            background-color: #e9ecef;
+            padding: 1rem;
+            border-radius: 5px;
+            font-style: italic;
+        }
+
+        .error-message {
+            color: #dc3545;
+            background-color: #f8d7da;
+            padding: 0.75rem;
+            border-radius: 5px;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            .navbar .nav-links {
+                position: fixed;
+                flex-direction: column;
+                background-color: #4A55A2;
+                width: 100%;
+                top: 60px;
+                left: 0;
+                padding: 1rem;
+                gap: 0.8rem;
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+                display: none;
+            }
+
+            .navbar .nav-links.active {
+                display: flex;
+            }
+
+            .navbar .nav-links a {
+                width: 100%;
+                padding: 0.8rem;
+            }
+
+            .navbar .user-actions {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .navbar .user-email {
+                margin-right: 0;
+                margin-bottom: 0.5rem;
+            }
+
+            .option-label {
+                flex: 1 1 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra de navegación -->
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-brain"></i>
+            <span>CalMamente</span>
+        </div>
+        <div class="menu-toggle" id="menu-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="nav-links" id="nav-links">
+            <a href="index.html"><i class="fas fa-home"></i> Inicio</a>
+            <a href="test_nom035.html" class="active"><i class="fas fa-clipboard-check"></i> Test NOM-035</a>
+            <a href="pausas_activas.html"><i class="fas fa-running"></i> Pausas Activas</a>
+            <a href="diario_emocional.html"><i class="fas fa-book"></i> Diario Emocional</a>
+            <a href="consejos_breves.html"><i class="fas fa-lightbulb"></i> Consejos</a>
+            <a href="checklist_nom035.html"><i class="fas fa-tasks"></i> Checklist</a>
+        </div>
+        <div class="user-actions">
+            <span class="user-email" id="user-email"></span>
+            <button class="logout-btn" id="logout-btn">Cerrar Sesión</button>
+        </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <div class="main-content">
+        <div class="test-container">
+            <div class="test-intro">
+                <h1>Test de factores de riesgo psicosocial NOM-035</h1>
+                <p>Este test te ayudará a identificar factores de riesgo psicosocial en tu entorno laboral según los criterios de la NOM-035-STPS-2018.</p>
+                <p>Responde todas las preguntas con sinceridad y de acuerdo a tu experiencia laboral actual.</p>
+            </div>
+
+            <form id="test-form" class="test-form">
+                <!-- Sección 1: Ambiente de trabajo -->
+                <div class="question-group">
+                    <h3>Ambiente de trabajo</h3>
+                    
+                    <div class="question">
+                        <p class="question-text">1. El espacio donde trabajo me permite realizar mis actividades de manera segura e higiénica.</p>
+                        <div class="options-group">
+                            <label class="option-label">
+                                <input type="radio" name="q1" value="0" required> Siempre
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q1" value="1"> Casi siempre
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q1" value="2"> Algunas veces
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q1" value="3"> Casi nunca
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q1" value="4"> Nunca
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p class="question-text">2. Mi trabajo me exige hacer mucho esfuerzo físico.</p>
+                        <div class="options-group">
+                            <label class="option-label">
+                                <input type="radio" name="q2" value="4" required> Siempre
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q2" value="3"> Casi siempre
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q2" value="2"> Algunas veces
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q2" value="1"> Casi nunca
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q2" value="0"> Nunca
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección 2: Carga de trabajo -->
+                <div class="question-group">
+                    <h3>Carga de trabajo</h3>
+                    
+                    <div class="question">
+                        <p class="question-text">3. Me alcanza el tiempo de trabajo para tener al día mis deberes.</p>
+                        <div class="options-group">
+                            <label class="option-label">
+                                <input type="radio" name="q3" value="0" required> Siempre
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q3" value="1"> Casi siempre
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q3" value="2"> Algunas veces
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q3" value="3"> Casi nunca
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q3" value="4"> Nunca
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p class="question-text">4. Tengo exceso de actividades durante mi jornada de trabajo.</p>
+                        <div class="options-group">
+                            <label class="option-label">
+                                <input type="radio" name="q4" value="4" required> Siempre
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q4" value="3"> Casi siempre
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q4" value="2"> Algunas veces
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q4" value="1"> Casi nunca
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q4" value="0"> Nunca
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección 3: Control sobre el trabajo -->
+                <div class="question-group">
+                    <h3>Control sobre el trabajo</h3>
+                    
+                    <div class="question">
+                        <p class="question-text">5. Mi trabajo me permite desarrollar mis habilidades.</p>
+                        <div class="options-group">
+                            <label class="option-label">
+                                <input type="radio" name="q5" value="0" required> Siempre
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q5" value="1"> Casi siempre
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q5" value="2"> Algunas veces
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q5" value="3"> Casi nunca
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q5" value="4"> Nunca
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p class="question-text">6. Puedo decidir la velocidad a la que realizo mis actividades en el trabajo.</p>
+                        <div class="options-group">
+                            <label class="option-label">
+                                <input type="radio" name="q6" value="0" required> Siempre
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q6" value="1"> Casi siempre
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q6" value="2"> Algunas veces
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q6" value="3"> Casi nunca
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q6" value="4"> Nunca
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección 4: Jornada de trabajo -->
+                <div class="question-group">
+                    <h3>Jornada de trabajo</h3>
+                    
+                    <div class="question">
+                        <p class="question-text">7. Trabajo horas extras más de tres veces a la semana.</p>
+                        <div class="options-group">
+                            <label class="option-label">
+                                <input type="radio" name="q7" value="4" required> Siempre
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q7" value="3"> Casi siempre
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q7" value="2"> Algunas veces
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q7" value="1"> Casi nunca
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q7" value="0"> Nunca
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p class="question-text">8. Mi trabajo me exige laborar en días de descanso, festivos o fines de semana.</p>
+                        <div class="options-group">
+                            <label class="option-label">
+                                <input type="radio" name="q8" value="4" required> Siempre
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q8" value="3"> Casi siempre
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q8" value="2"> Algunas veces
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q8" value="1"> Casi nunca
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q8" value="0"> Nunca
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección 5: Relaciones en el trabajo -->
+                <div class="question-group">
+                    <h3>Relaciones en el trabajo</h3>
+                    
+                    <div class="question">
+                        <p class="question-text">9. Recibo apoyo de mis compañeros para resolver problemas en el trabajo.</p>
+                        <div class="options-group">
+                            <label class="option-label">
+                                <input type="radio" name="q9" value="0" required> Siempre
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q9" value="1"> Casi siempre
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q9" value="2"> Algunas veces
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q9" value="3"> Casi nunca
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q9" value="4"> Nunca
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p class="question-text">10. En mi trabajo puedo expresar mis opiniones sin interrupciones o represalias.</p>
+                        <div class="options-group">
+                            <label class="option-label">
+                                <input type="radio" name="q10" value="0" required> Siempre
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q10" value="1"> Casi siempre
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q10" value="2"> Algunas veces
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q10" value="3"> Casi nunca
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="q10" value="4"> Nunca
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">Evaluar resultados</button>
+                <div id="error-message" class="error-message">Por favor responde todas las preguntas antes de enviar.</div>
+            </form>
+
+            <div id="result-container" class="result-container">
+                <h3 class="result-title">Resultado de la evaluación</h3>
+                <p class="result-description">Con base en tus respuestas, se ha determinado lo siguiente:</p>
+                <p id="result-score" class="result-score"></p>
+                <div id="result-recommendation" class="result-recommendation"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts de Firebase -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCBfF4xpr0rWKAXPlk9x0__UfzPETSMwb4",
+            authDomain: "calmamente-3bfc1.firebaseapp.com",
+            projectId: "calmamente-3bfc1",
+            storageBucket: "calmamente-3bfc1.firebasestorage.app",
+            messagingSenderId: "1088959614450",
+            appId: "1:1088959614450:web:5d328c0c593228e214af6b"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Verificar autenticación
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // Usuario autenticado
+                document.getElementById("user-email").textContent = user.email;
+            } else {
+                // No hay usuario, redirigir al login
+                window.location.href = "login.html";
+            }
+        });
+
+        // Cerrar sesión
+        document.getElementById("logout-btn").addEventListener("click", () => {
+            signOut(auth).then(() => {
+                // Redireccionar a login
+                window.location.href = "login.html";
+            }).catch((error) => {
+                console.error("Error al cerrar sesión:", error);
+            });
+        });
+
+        // Toggle menú para móviles
+        const menuToggle = document.getElementById("menu-toggle");
+        const navLinks = document.getElementById("nav-links");
+
+        menuToggle.addEventListener("click", () => {
+            navLinks.classList.toggle("active");
+        });
+
+        // Cerrar menú al hacer clic en un enlace
+        document.querySelectorAll(".nav-links a").forEach(link => {
+            link.addEventListener("click", () => {
+                if (navLinks.classList.contains("active")) {
+                    navLinks.classList.remove("active");
+                }
+            });
+        });
+
+        // Manejar formulario de test NOM-035
+        const testForm = document.getElementById("test-form");
+        const resultContainer = document.getElementById("result-container");
+        const resultScore = document.getElementById("result-score");
+        const resultRecommendation = document.getElementById("result-recommendation");
+        const errorMessage = document.getElementById("error-message");
+
+        testForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            
+            // Verificar que todas las preguntas han sido respondidas
+            const formData = new FormData(testForm);
+            const totalQuestions = 10; // Total de preguntas en el formulario
+            
+            if ([...formData.entries()].length < totalQuestions) {
+                errorMessage.style.display = "block";
+                return;
+            }
+            
+            errorMessage.style.display = "none";
+            
+            // Calcular puntaje total
+            let totalScore = 0;
+            for (let i = 1; i <= totalQuestions; i++) {
+                totalScore += parseInt(formData.get(`q${i}`));
+            }
+            
+            // Determinar nivel de riesgo basado en puntaje (escala ficticia)
+            let riskLevel = "";
+            let recommendation = "";
+            
+            if (totalScore <= 10) {
+                riskLevel = "Bajo";
+                recommendation = "Tu ambiente laboral muestra indicadores positivos. Continúa con las buenas prácticas y mantén comunicación abierta con tu equipo y superiores.";
+            } else if (totalScore <= 20) {
+                riskLevel = "Medio";
+                recommendation = "Existen algunos factores de riesgo psicosocial que requieren atención. Considera hablar con tu supervisor sobre posibles mejoras en tu entorno laboral.";
+            } else if (totalScore <= 30) {
+                riskLevel = "Alto";
+                recommendation = "Se detectan varios factores de riesgo psicosocial importantes. Es recomendable que la empresa implemente acciones preventivas y correctivas pronto.";
+            } else {
+                riskLevel = "Muy Alto";
+                recommendation = "Los factores de riesgo psicosocial son significativos. La empresa debe tomar acciones inmediatas para mejorar las condiciones laborales según lo establece la NOM-035.";
+            }
+            
+            // Mostrar resultados
+            resultScore.textContent = `Puntaje total: ${totalScore}/40 - Nivel de riesgo: ${riskLevel}`;
+            resultRecommendation.textContent = recommendation;
+            resultContainer.style.display = "block";
+            
+            // Guardar resultados en Firestore
+            try {
+                const user = auth.currentUser;
+                if (user) {
+                    await addDoc(collection(db, "test_nom035"), {
+                        userId: user.uid,
+                        userEmail: user.email,
+                        timestamp: serverTimestamp(),
+                        score: totalScore,
+                        riskLevel: riskLevel,
+                        answers: Object.fromEntries([...formData.entries()])
+                    });
+                }
+            } catch (error) {
+                console.error("Error al guardar los resultados:", error);
+            }
+        });
+    </script>
+</body>
+</html>
